@@ -1,15 +1,4 @@
-const getEmptySquares = (squares) => {
-  return squares
-    .map((val, idx) => [val, idx])
-    .filter((item) => item[0] === null);
-};
-
-const isMoveLeft = (squares) => {
-  const emptySquares = getEmptySquares(squares);
-  return emptySquares.length > 0;
-};
-
-export const replace = (squares, index, value) => {
+const replace = (squares, index, value) => {
   return [
     ...squares.slice(0, index),
     value,
@@ -19,14 +8,14 @@ export const replace = (squares, index, value) => {
 
 const evaluate = (squares, computerType) => {
   const lines = [
-    [0, 1, 2], // h.h0
-    [3, 4, 5], // h.h1
-    [6, 7, 8], // h.h2
-    [0, 3, 6], // v.v0
-    [1, 4, 7], // v.v1
-    [2, 5, 8], // v.v2
-    [0, 4, 8], // d.d0
-    [2, 4, 6], // d.d1
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
   ];
 
   for (let i = 0; i < lines.length; i++) {
@@ -50,7 +39,11 @@ const minimax = (squares, depth, computerType, isMax) => {
 
   if (score === 10) return score - depth;
   if (score === -10) return score + depth;
-  if (!isMoveLeft(squares)) return 0;
+  if (
+    !squares.map((val, i) => [val, i]).filter((item) => item[0] === null)
+      .length > 0
+  )
+    return 0;
 
   const lengthSquares = squares.length;
   let best;
@@ -59,9 +52,9 @@ const minimax = (squares, depth, computerType, isMax) => {
     best = -1000;
 
     for (let i = 0; i < lengthSquares; i++) {
-      const cell = squares[i];
+      const square = squares[i];
 
-      if (cell === null) {
+      if (square === null) {
         const nextSquares = replace(squares, i, computerType);
 
         best = Math.max(
@@ -74,9 +67,9 @@ const minimax = (squares, depth, computerType, isMax) => {
     best = 1000;
 
     for (let i = 0; i < lengthSquares; i++) {
-      const cell = squares[i];
+      const square = squares[i];
 
-      if (cell === null) {
+      if (square === null) {
         const nextSquares = replace(squares, i, 1 - computerType);
 
         best = Math.min(
@@ -94,11 +87,10 @@ export const findBestMove = (squares, computerType) => {
   let bestVal = -1000;
   let bestMove = null;
 
-  const lengthSquares = squares.length;
-  for (let i = 0; i < lengthSquares; i++) {
-    const cell = squares[i];
+  for (let i = 0; i < squares.length; i++) {
+    const square = squares[i];
 
-    if (cell === null) {
+    if (square === null) {
       const nextSquares = replace(squares, i, computerType);
 
       const moveVal = minimax(nextSquares, 0, computerType, false);
